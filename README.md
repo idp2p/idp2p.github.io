@@ -48,10 +48,95 @@ An identity is also a topic to subsribe(it means ledger is based on subscription
 ![w:1000](assets/idp2p.drawio.png) 
 
 
-
 ### Identity
 
-#### *example*
+An `idp2p` identity includes unique identifier, microledger and DID document. 
+
+```json
+{
+    "id": "did:p2p:z6MkpTHR8VNsBxYAAWHut2Geadd9jSwuBV8xRoAnwWsdvktH",
+    "microledger": {},
+    "document": {}
+}
+```
+
+*`id`* is the unique identifier of identity. It uses id generation like `did:peer`. ID should be generated following way: 
+
+- Generate an inception block
+- Get json string of the block
+- Convert it to bytes
+- Get SHA-256 digest of bytes
+- Encode it with multibase and multicodec(like `ipfs`)
+
+*sample id*: `did:p2p:bagaaieratxin4o3iclo7ua3s3bbueds2uzfc5gi26mermevzb2etqliwjbla`
+
+`microledger` represents backing storage of identity and it includes id, inception and events for identity
+
+```json
+  {
+    "id": "bagaaieratxin4o3iclo7ua3s3bbueds2uzfc5gi26mermevzb2etqliwjbla",
+    "inception": {},
+    "events": []
+  }
+```
+
+`inception` includes `keyType` `next` and `recovery` public key digest
+
+```json
+{
+  "keyType": "Ed25519VerificationKey2020",
+  "nextKeyDigest": "<base32 value of next public key digest",
+  "nextKeyDigest": "<base32 value of recovery public key digest"
+}
+```
+
+`events` is array of identity changes and each event is linked to the previous one. First event is linked inception block.
+
+![w:1000](assets/microledger.drawio.png) 
+
+
+```json
+{
+    "payload": {
+      "previous": "<inception-hash>",
+      "signerKey": "by5gtwpufy4zfnog4j..",
+      "nextKeyDigest": "by5gtwpufy4zfnog4j..",
+      "change": {
+        "type": "SetDocument",
+        "value": "bdu3gqtjc6ks52.."
+      },
+      "timestamp": 1642418658
+    },
+    "proof": "bx6svqb6if5yaflgoumdff7j.."
+}
+```
+
+There are three event types.
+
+- `SetDocument`: proof of did document change, requires `value` property which is hash of did document.
+- `SetProof`: any proof about identity,  requires `key` and `value` properties.
+- `SetRecoveryKey` recovery proof of identity requires `next_signer_key` and `next_recovery_key` properties.
+
+`did_doc` is described in [DIDs Spec](https://www.w3.org/TR/did-core/). Only latest document is stored in identity.
+
+```json
+{
+    "id": "did:p2p:bagaaieratxin..",
+    "controller": "did:p2p:bagaaieratxi..",
+    "@context": [
+        "https://www.w3.org/ns/did/v1",
+        "https://w3id.org/security/suites/ed25519-2020/v1",
+        "https://w3id.org/security/suites/x25519-2020/v1"
+    ],
+    "verificationMethod": [...],
+    "assertionMethod": ["did:p2p:bagaaieratxib#wtyb2xhyvxolbd.."],
+    "authentication": ["did:p2p:bagaaieratxib#3txadadmtke6d.."],
+    "keyAgreement": ["did:p2p:bagaaieratxib#cnzphk5djc3bt64.."]
+}
+```
+
+
+#### *Full example*
 
 ```json
 {
@@ -128,135 +213,9 @@ An identity is also a topic to subsribe(it means ledger is based on subscription
 }
 ```
 
-An `idp2p` identity includes unique identifier, microledger and did document. 
-
-```json
-{
-    "id": "did:p2p:z6MkpTHR8VNsBxYAAWHut2Geadd9jSwuBV8xRoAnwWsdvktH",
-    "microledger": {},
-    "document": {}
-}
-```
-
-*`id`* is the unique identifier of identity. It uses id generation like `did:peer`. ID should be generated following way: 
-
-- Generate an inception block
-- Get json string of the block
-- Convert it to bytes
-- Get SHA-256 digest of bytes
-- Encode it with multibase and multicodec(like `ipfs`)
-
-*sample id*: `did:p2p:bagaaieratxin4o3iclo7ua3s3bbueds2uzfc5gi26mermevzb2etqliwjbla`
-
-`microledger` represents backing storage of identity and it includes id, inception and events for identity
-
-```json
-  {
-    "id": "bagaaieratxin4o3iclo7ua3s3bbueds2uzfc5gi26mermevzb2etqliwjbla",
-    "inception": {},
-    "events": []
-  }
-```
-
-`did_doc` is described in [DIDs Spec](https://www.w3.org/TR/did-core/). Only latest document is stored in identity.
-
-```json
-{
-    "id": "did:p2p:bagaaieratxin..",
-    "controller": "did:p2p:bagaaieratxi..",
-    "@context": [
-        "https://www.w3.org/ns/did/v1",
-        "https://w3id.org/security/suites/ed25519-2020/v1",
-        "https://w3id.org/security/suites/x25519-2020/v1"
-    ],
-    "verificationMethod": [...],
-    "assertionMethod": ["did:p2p:bagaaieratxib#wtyb2xhyvxolbd.."],
-    "authentication": ["did:p2p:bagaaieratxib#3txadadmtke6d.."],
-    "keyAgreement": ["did:p2p:bagaaieratxib#cnzphk5djc3bt64.."]
-}
-```
-
-### Microledger Details
-
-`id` is same with identifier except `did:p2p:` prefix.
-
-`inception` includes `keyType` `next` and `recovery` public key digest
-
-```json
-{
-  "keyType": "Ed25519VerificationKey2020",
-  "nextKeyDigest": "<base32 value of next public key digest",
-  "nextKeyDigest": "<base32 value of recovery public key digest"
-}
-```
-
-`events` is array of identity changes and each event is linked to the previous one. First event is linked inception block.
-
-![w:1000](assets/microledger.drawio.png) 
-
-
-```json
-{
-    "payload": {
-      "previous": "<inception-hash>",
-      "signerKey": "by5gtwpufy4zfnog4j..",
-      "nextKeyDigest": "by5gtwpufy4zfnog4j..",
-      "change": {
-        "type": "SetDocument",
-        "value": "bdu3gqtjc6ks52.."
-      },
-      "timestamp": 1642418658
-    },
-    "proof": "bx6svqb6if5yaflgoumdff7j.."
-}
-```
-
-There are three event types.
-
-- `SetDocument`: proof of did document change, requires `value` property which is hash of did document.
-- `SetProof`: any proof about identity,  requires `key` and `value` properties.
-- `SetRecoveryKey` recovery proof of identity requires `next_signer_key` and `next_recovery_key` properties.
-
-## Getting Started(rust demo) 
-
-#### Generate a peer
-
-- ```cargo run```
-
-#### Create identity
-
-- cmd: ```create-id <name>```
-
-- ex: `create-id ademcaglin`
-
-#### Subscribe to identity
-
-- cmd: ```get <id>```
-- ex: `get did:p2p:bagaaieraam4...`
-
-#### Resolve identity
-
-- cmd: ```resolve <id>```
-- ex: `resolve did:p2p:bagaaieraam4...`
-
-#### Create new doc
-
-- cmd: ```create-doc <name>```
-- ex: `create-doc ademcaglin`
-
-#### Recover
-
-- cmd: ```recover <name>```
-- ex: `recover ademcaglin`
-
-#### Demo 
-
-![w:1000](assets/idp2p.gif)
-
-
 ## Contributions
 
-The idp2p protocol and  `rust` implementation in is a work in progress. 
+The idp2p protocol and implementations are work in progress. 
 
 Contributions are most welcome
 
