@@ -41,11 +41,11 @@ There are two pub-sub commands:
 - `get`: when a peer want to subscribe to an identity, it publishs a `get` command with `id` over the network. 
 - `post`: when a peer received a `get` command or an identity change occured, it posts identity information to subscribers in order to reach a consensus
 
-![w:1000](assets/idp2p-pubsub.gif) 
+![w:1000](idp2p-pubsub.gif) 
 
 An identity is also a topic to subsribe(it means ledger is based on subscription)
 
-![w:1000](assets/idp2p.drawio.png) 
+![w:1000](idp2p.drawio.png) 
 
 
 ### Identity
@@ -92,7 +92,7 @@ An `idp2p` identity includes unique identifier, microledger and DID document.
 
 `events` is array of identity changes and each event is linked to the previous one. First event is linked inception block.
 
-![w:1000](assets/microledger.drawio.png) 
+![w:1000](microledger.drawio.png) 
 
 
 ```json
