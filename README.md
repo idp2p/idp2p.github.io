@@ -115,7 +115,7 @@ There are three event types.
 
 - `SetDocument`: proof of did document change, requires `value` property which is hash of did document.
 - `SetProof`: any proof about identity,  requires `key` and `value` properties.
-- `SetRecoveryKey` recovery proof of identity requires `next_signer_key` and `next_recovery_key` properties.
+- `Recover` recovery proof of identity requires `keyType` and `recoveryKeyDigest` properties.
 
 `did_doc` is described in [DIDs Spec](https://www.w3.org/TR/did-core/). Only latest document is stored in identity.
 
