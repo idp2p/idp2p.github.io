@@ -54,7 +54,7 @@ An `idp2p` identity includes unique identifier, microledger and DID document.
 
 ```json
 {
-    "id": "did:p2p:z6MkpTHR8VNsBxYAAWHut2Geadd9jSwuBV8xRoAnwWsdvktH",
+    "id": "bagaaieratxin4o3iclo7ua3s3bbueds2uzfc5gi26mermevzb2etqliwjbla",
     "microledger": {},
     "document": {}
 }
@@ -68,7 +68,7 @@ An `idp2p` identity includes unique identifier, microledger and DID document.
 - Get SHA-256 digest of bytes
 - Encode it with multibase and multicodec(like `ipfs`)
 
-*sample id*: `did:p2p:bagaaieratxin4o3iclo7ua3s3bbueds2uzfc5gi26mermevzb2etqliwjbla`
+*sample id*: `bagaaieratxin4o3iclo7ua3s3bbueds2uzfc5gi26mermevzb2etqliwjbla`
 
 `microledger` represents backing storage of identity and it includes id, inception and events for identity
 
