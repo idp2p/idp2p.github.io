@@ -60,7 +60,7 @@ An `idp2p` identity includes unique identifier, microledger and DID document.
 }
 ```
 
-*`id`* is the unique identifier of identity. It uses id generation like `did:peer`. ID should be generated following way: 
+*`id`* is the unique identifier of identity. It uses id generation like `did:peer`. `id` should be generated following way: 
 
 - Generate an inception block
 - Get json string of the block
