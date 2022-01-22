@@ -213,6 +213,10 @@ There are three event types.
 }
 ```
 
+## Demo
+
+![w:1000](idp2p-demo.gif)
+
 ## Contributions
 
 The idp2p protocol and implementations are work in progress. 
