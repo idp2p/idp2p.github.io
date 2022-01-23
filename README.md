@@ -85,7 +85,7 @@ An `idp2p` identity includes unique identifier, microledger and DID document.
 {
   "keyType": "Ed25519VerificationKey2020",
   "nextKeyDigest": "<base32 value of next public key digest",
-  "nextKeyDigest": "<base32 value of recovery public key digest"
+  "recoveryKeyDigest": "<base32 value of recovery public key digest"
 }
 ```
 
