@@ -74,7 +74,6 @@ An `idp2p` identity includes unique identifier, microledger and DID document.
 
 ```json
   {
-    "id": "bagaaieratxin4o3iclo7ua3s3bbueds2uzfc5gi26mermevzb2etqliwjbla",
     "inception": {},
     "events": []
   }
