@@ -29,7 +29,9 @@ The protocol is based on [libp2p](https://libp2p.io/), in other words, it can be
 - Self-describing identity(like `did:keri`, `did:peer`, `did:key`)
 - Based on `libp2p` pub-sub protocol, so it can be stored and resolved via network
 - P2P network provides one ledger per identity
-- Only identity owner and verifiers are responsible for storing and verifying identity
+- Only identity owner and interested parties are responsible for storing and verifying identity
+- DIDComm can be achieved via pub-sub
+- Service endpoints are not necessary in document because identities can communicate directly via network
 
 
 ### Consensus Mechanism 
@@ -54,7 +56,7 @@ An `idp2p` identity includes unique identifier, microledger and DID document.
 
 ```json
 {
-    "id": "bagaaieratxin4o3iclo7ua3s3bbueds2uzfc5gi26mermevzb2etqliwjbla",
+    "id": "did:p2p:bagaaieratxin4o3iclo7ua3s3bbueds2uzfc5gi26mermevzb2etqliwjbla",
     "microledger": {},
     "document": {}
 }
@@ -139,7 +141,7 @@ There are three event types.
 
 ```json
 {
-    "id": "bagaaieratxin4o3iclo7ua3s3bbueds2uzfc5gi26mermevzb2etqliwjbla",
+    "id": "did:p2p:bagaaieratxin4o3iclo7ua3s3bbueds2uzfc5gi26mermevzb2etqliwjbla",
     "microledger": {
         "inception": {
             "keyType": "Ed25519VerificationKey2020",
