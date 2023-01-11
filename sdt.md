@@ -69,6 +69,9 @@ Consider a query for certain fields from the verifiable credential, the query co
   ```
 When the Selective Disclosure Trie is used to parse the above query, It returns only the requested fields, along with their associated proofs, in a tree-like structure, result is:
 
+![image](./sdt.png)
+
+
 ```
 {
   "key": "/",
@@ -125,114 +128,3 @@ When the Selective Disclosure Trie is used to parse the above query, It returns 
 ```
 
 As you can see from the example, the Selective Disclosure Trie can process the query and returns only the requested fields, which allows individuals to selectively disclose only the necessary fields of a credential, rather than the entire credential, this way it enables privacy enhancement without revealing unnecessary information and it also ensures that only authorized parties can access the information and that the information is tamper-proof, so it's a powerful tool for managing verifiable credentials and their associated data, while maintaining user privacy.
-
-Credential:
-
-```json
-{
-  "personal": {
-    "name": {
-      "salt": "random",
-      "raw": "Adem"
-    },
-    "birthday": {
-      "salt": "random",
-      "raw": "1.1.1984"
-    }
-  },
-  "addresses": {
-    "home": {
-      "zipcode": {
-        "salt": "random",
-        "raw": "2020"
-      },
-      "city": {
-        "salt": "random",
-        "raw": "homecity"
-      }
-    },
-    "work": {
-      "zipcode": {
-        "salt": "random",
-        "raw": "2030"
-      },
-      "city": {
-        "salt": "random",
-        "raw": "workcity"
-      }
-    }
-  }
-}
-```
-
-Query:
-
-```
-{
-    personal{
-      name
-    }
-    addresses{
-      work{
-        city
-      }
-    }
-  }
- ```
- 
- Trie Result:
- 
- ```json
-{
-  "key": "/",
-  "proof": "a268",
-  "children": [
-    {
-      "key": "/personal/",
-      "proof": "f18c",
-      "children": [
-        {
-          "key": "/personal/name/",
-          "proof": "ea43",
-          "value": {
-            "salt": "random",
-            "raw": "Adem"
-          }
-        },
-        {
-          "key": "/personal/birthday/",
-          "proof": "93cc"
-        }
-      ]
-    },
-    {
-      "key": "/addresses/",
-      "proof": "bb63",
-      "children": [
-        {
-          "key": "/addresses/home/",
-          "proof": "b29f"
-        },
-        {
-          "key": "/addresses/work/",
-          "proof": "4075",
-          "children": [
-            {
-              "key": "/addresses/work/zipcode/",
-              "proof": "8561"
-            },
-            {
-              "key": "/addresses/work/city/",
-              "proof": "431d",
-              "value": {
-                "salt": "random",
-                "raw": "workcity"
-              }
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}
- ```
