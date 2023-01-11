@@ -14,7 +14,7 @@ The Selective Disclosure Trie proposal also allows for efficient management of l
 
 In conclusion, the privacy is an essential aspect in verifiable credential ecosystem, and the Selective Disclosure Trie proposal provides a solution that addresses this concern. By allowing individuals to selectively disclose only the necessary fields of a credential, the proposal enhances privacy and security while also allowing for efficient management of large numbers of fields.
 
-Consider the example of a verifiable credential in JSON format, with personal information such as name, surname, gender and birthday, phone numbers and addresses with their zipcodes and cities(you can try it at https://tudnme.csb.app/).
+Consider the example of a verifiable credential in JSON format, with personal information such as name, surname, gender and birthday, phone numbers and addresses with their zipcodes and cities(You can give it a try by visiting the following link: https://tudnme.csb.app/).
 
 ```json
 {
