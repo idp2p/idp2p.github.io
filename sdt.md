@@ -128,3 +128,5 @@ When the Selective Disclosure Trie is used to parse the above query, It returns 
 ```
 
 As you can see from the example, the Selective Disclosure Trie can process the query and returns only the requested fields, which allows individuals to selectively disclose only the necessary fields of a credential, rather than the entire credential, this way it enables privacy enhancement without revealing unnecessary information and it also ensures that only authorized parties can access the information and that the information is tamper-proof, so it's a powerful tool for managing verifiable credentials and their associated data, while maintaining user privacy.
+
+Demo https://tudnme.csb.app/
