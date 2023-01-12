@@ -1,6 +1,6 @@
 # Selective Disclosure Trie
 
-> "Selective Disclosure Trie" is a proposal solution that uses a data structure called a trie, to enable efficient and secure selective disclosure of fields from verifiable credentials for privacy enhancement 
+> "Selective Disclosure Trie" is a solution proposal that uses a data structure called a trie, to enable efficient and secure selective disclosure of fields from verifiable credentials for privacy enhancement 
 
 Verifiable credentials are digital representations of claims made about an individual, such as their name, age, and qualifications. They have the potential to revolutionize the way in which we prove our identity and share information online. However, in order for verifiable credentials to be widely adopted, privacy concerns must be addressed.
 
@@ -10,7 +10,7 @@ This is where the "Selective Disclosure Trie" proposal comes in. The solution is
 
 With the Selective Disclosure Trie, individuals can choose which branches of the trie to reveal, thereby disclosing only the necessary information. This enhances privacy by allowing individuals to share only the information that is required for a specific purpose, rather than the entire credential.
 
-The Selective Disclosure Trie proposal also allows for efficient management of large numbers of fields in a verifiable credential, making it well-suited for use in real-world systems. It also ensures that only authorized parties can access the information and that the information is tamper-proof.
+The Selective Disclosure Trie also allows for efficient management of large numbers of fields in a verifiable credential, making it well-suited for use in real-world systems. It also ensures that only authorized parties can access the information and that the information is tamper-proof.
 
 In conclusion, the privacy is an essential aspect in verifiable credential ecosystem, and the Selective Disclosure Trie proposal provides a solution that addresses this concern. By allowing individuals to selectively disclose only the necessary fields of a credential, the proposal enhances privacy and security while also allowing for efficient management of large numbers of fields.
 
