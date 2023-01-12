@@ -10,11 +10,11 @@ This is where the "Selective Disclosure Trie" proposal comes in. The solution is
 
 With the Selective Disclosure Trie, individuals can choose which branches of the trie to reveal, thereby disclosing only the necessary information. This enhances privacy by allowing individuals to share only the information that is required for a specific purpose, rather than the entire credential.
 
-The Selective Disclosure Trie also allows for efficient management of large numbers of fields in a verifiable credential, making it well-suited for use in real-world systems. It also ensures that only authorized parties can access the information and that the information is tamper-proof.
+The Selective Disclosure Trie also enables an issuer to sign only a particular proof of interest.  
 
 In conclusion, the privacy is an essential aspect in verifiable credential ecosystem, and the Selective Disclosure Trie proposal provides a solution that addresses this concern. By allowing individuals to selectively disclose only the necessary fields of a credential, the proposal enhances privacy and security while also allowing for efficient management of large numbers of fields.
 
-Consider the example of a verifiable credential in JSON format, with personal information such as name, surname, gender and birthday, phone numbers and addresses with their zipcodes and cities(You can give it a try by visiting the following link: https://tudnme.csb.app/).
+Consider the example of a verifiable credential in JSON format, with personal information.
 
 ```json
 {
@@ -130,4 +130,4 @@ When the Selective Disclosure Trie is used to parse the above query, It returns 
 
 As you can see from the example, the Selective Disclosure Trie can process the query and returns only the requested fields, which allows individuals to selectively disclose only the necessary fields of a credential, rather than the entire credential, this way it enables privacy enhancement without revealing unnecessary information and it also ensures that only authorized parties can access the information and that the information is tamper-proof, so it's a powerful tool for managing verifiable credentials and their associated data, while maintaining user privacy.
 
-Demo https://tudnme.csb.app/
+Playground https://tudnme.csb.app/
