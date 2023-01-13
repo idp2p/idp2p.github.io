@@ -2,6 +2,8 @@
 
 > "Selective Disclosure Trie" is a solution proposal that uses a data structure called a trie, to enable efficient and secure selective disclosure of fields from verifiable credentials for privacy enhancement 
 
+> Inspired by Merkle Patricia Trie 
+
 Verifiable credentials are digital representations of claims made about an individual, such as their name, age, and qualifications. They have the potential to revolutionize the way in which we prove our identity and share information online. However, in order for verifiable credentials to be widely adopted, privacy concerns must be addressed.
 
 One such concern is the disclosure of unnecessary information. When sharing a verifiable credential, an individual may be required to reveal more information than is necessary for the intended purpose. For example, an individual may be asked to share their entire passport when all that is needed is their name and date of birth. This not only breaches the individual's privacy, but also increases the risk of sensitive information being compromised.
@@ -76,15 +78,15 @@ When the Selective Disclosure Trie is used to parse the above query, It returns 
 ```
 {
   "key": "/",
-  "proof": "a268",
+  "proof": "a268...",
   "children": [
     {
       "key": "/personal/",
-      "proof": "f18c",
+      "proof": "f18c...",
       "children": [
         {
           "key": "/personal/name/",
-          "proof": "ea43",
+          "proof": "ea43...",
           "value": {
             "salt": "random",
             "raw": "Adem"
@@ -92,29 +94,29 @@ When the Selective Disclosure Trie is used to parse the above query, It returns 
         },
         {
           "key": "/personal/birthday/",
-          "proof": "93cc"
+          "proof": "93cc..."
         }
       ]
     },
     {
       "key": "/addresses/",
-      "proof": "bb63",
+      "proof": "bb63...",
       "children": [
         {
           "key": "/addresses/home/",
-          "proof": "b29f"
+          "proof": "b29f..."
         },
         {
           "key": "/addresses/work/",
-          "proof": "4075",
+          "proof": "4075...",
           "children": [
             {
               "key": "/addresses/work/zipcode/",
-              "proof": "8561"
+              "proof": "8561..."
             },
             {
               "key": "/addresses/work/city/",
-              "proof": "431d",
+              "proof": "431d...",
               "value": {
                 "salt": "random",
                 "raw": "workcity"
