@@ -55,7 +55,7 @@ Consider the example of a verifiable credential in JSON format, with personal in
 }
 ```
 
-Consider a query for certain fields from the verifiable credential, the query could be like this
+Consider a query for certain fields from the verifiable credential, the query could be like this(like a graphql query)
 
 ```
 {
