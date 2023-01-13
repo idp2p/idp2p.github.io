@@ -75,20 +75,20 @@ When the Selective Disclosure Trie is used to parse the above query, It returns 
 ![image](./sdt.png)
 
 
-```
+```javascript
 {
-  "key": "/",
-  "proof": "a268...",
+  "key": "/", 
+  "proof": "a268...", // Root proof which means fingerprint of entire credential 
   "children": [
     {
-      "key": "/personal/",
+      "key": "/personal/", // Personal Root proof which means fingerprint of entire personal claims
       "proof": "f18c...",
       "children": [
         {
-          "key": "/personal/name/",
-          "proof": "ea43...",
+          "key": "/personal/name/", // Leaf node has a claim and optinal salt
+          "proof": "ea43...", //  Proof is sha256 hash of value 
           "value": {
-            "salt": "random",
+            "salt": "random", // To prevent rainbow attack
             "raw": "Adem"
           }
         },
