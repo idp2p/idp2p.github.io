@@ -14,7 +14,7 @@ With the Selective Disclosure Trie, individuals can choose which branches of the
 
 The Selective Disclosure Trie also enables an issuer to sign only a particular proof of interest.  
 
-In conclusion, the privacy is an essential aspect in verifiable credential ecosystem, and the Selective Disclosure Trie proposal provides a solution that addresses this concern. By allowing individuals to selectively disclose only the necessary fields of a credential, the proposal enhances privacy and security while also allowing for efficient management of large numbers of fields.
+In conclusion, the privacy is an essential aspect in verifiable credential ecosystem, and the Selective Disclosure Trie proposal provides a solution that addresses this concern. By allowing individuals to selectively disclose only the necessary fields of a credential, the proposal enhances privacy and security.
 
 Consider the example of a verifiable credential in JSON format, with personal information.
 
