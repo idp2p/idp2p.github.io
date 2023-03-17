@@ -4,7 +4,7 @@
 
 #### Problem
 
-As the saying goes, "Great deceivers do not lie", in other words, small deceivers try to deceive people by lying. So, the truth doesn't always represent the entirety of reality.
+As the saying goes, "Great deceivers do not lie", in other words, small deceivers try to deceive people by lying. While the truth may reveal a part of reality, it does not always provide a complete picture of the whole.
 
 To illustrate this problem, consider the following analogy:
 
