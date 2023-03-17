@@ -52,7 +52,7 @@ personal_proof = hash({ "name": "<proof>", "surname": "<proof>" })
 
 name_proof = hash({ "value": "Adem", "salt": "0x.." })
 
-// Not: hash method is sha-256 and byte encoding is hexadecimal
+// Note: hash method is sha-256 and byte encoding is hexadecimal
 
 ``` 
 
