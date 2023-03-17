@@ -66,7 +66,7 @@ This proof, similar to a Merkle root, represents a summary of all information, t
 }
 ```
 
-This query produces a result that reveals only the person's name, but also provides proofs for `surname` and `address`:
+This query produces a result that reveals only the person's name, but also provides proofs for `surname` and `addresses`:
 
 
 ```json 
