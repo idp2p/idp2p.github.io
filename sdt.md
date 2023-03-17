@@ -24,9 +24,9 @@ To avoid this situation, Alice would need to ask Bob to "prove that she is the o
 In the digital world, let's propose a solution for this analogy related to privacy and proof of non-existence.
 </details>
 
-The SDT is a solution proposal that expresses personal information with a data structure called a trie, similar to a Merkle tree. SDT provides two key features; selective disclosure and proof of non-existence.
+The SDT is a solution proposal that expresses personal information with a data structure called a trie. SDT provides two key features; selective disclosure and proof of non-existence.
 
-SDT creates a root proof similar to a `Merkle Tree` but its branches have keys like `Merkle Patricia Trie`. A branch node's proof is obtained from the proofs of its child nodes. As an example, the proof of the following tree is a summary of the ordered JSON data consisting of the `personal` and `addresses` proofs. The proof of a leaf node is the hash of salt and value. Consider the following information:
+SDT creates a root proof similar to a `Merkle Tree` but its branches have keys like `Merkle Patricia Trie`. A branch node's proof is obtained from the proofs of its child nodes. The proof of a leaf node is the hash of salt and value. As an example, the proof of the following tree is a digest of the ordered JSON data consisting of the `personal` and `addresses` proofs.  Consider the following information:
 
 
 ```json
