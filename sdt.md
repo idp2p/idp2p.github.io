@@ -2,8 +2,10 @@
 
 > Inspired by Merkle Patricia Trie
 
-#### Problem
+> SDT is a solution proposal that uses a data structure called a trie, to enable selective disclosure of claims for privacy enhancement. It also provides proof of non-existence. 
 
+<details>
+   <summary>Problem Anology</summary>
 As the saying goes, "Great deceivers do not lie", in other words, small deceivers try to deceive people by lying. They deceive people by saying partial truth. While the truth may reveal a part of reality, it does not always provide a complete picture of the whole.
 
 To illustrate this problem, consider the following analogy:
@@ -20,8 +22,7 @@ To illustrate this problem, consider the following analogy:
 To avoid this situation, Alice would need to ask Bob to "prove that she is the only one in his heart". However, Bob would not want to completely open up his heart, because the fact that Alice is in his heart only concerns Alice, and furthermore, who his friend is doesn't concern Alice at all. As a result, Bob would need to prove that the love compartment in his heart belongs only to Alice.
 
 In the digital world, let's propose a solution for this analogy related to privacy and proof of non-existence.
-
-#### Solution
+</details>
 
 The SDT is a solution proposal that expresses personal information with a data structure called a trie, similar to a Merkle tree. SDT provides two key features; selective disclosure and proof of non-existence.
 
@@ -56,7 +57,7 @@ name_proof = hash({ "value": "Adem", "salt": "0x.." })
 
 ``` 
 
-This proof, similar to a Merkle root, represents a summary of all information, thus ensuring data integrity. So how is selective disclosure possible? For example, consider a verifier who only needs the person's name. SDT expresses this query using a GraphQL-like query structure:
+This proof, similar to a merkle root, represents a fingerprint of entire claims, thus ensuring data integrity. So how is selective disclosure possible? For example, consider a verifier who only needs the person's name. SDT expresses this query using a GraphQL-like query structure:
 
 ```graphql
 {
@@ -87,7 +88,7 @@ Now, let's discuss how proof of non-existence is achieved. Suppose a verifier wa
   }
 }
 ```
-In this case, the owner can prove that they don't have a phone number as follows:
+In this case, the owner can prove that they don't have a phone number by revealing proofs of `personal` and `addresses` branches.
 
 ```json 
 {                                                                 
