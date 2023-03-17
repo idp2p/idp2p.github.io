@@ -23,7 +23,7 @@ In the digital world, let's propose a solution for this analogy related to priva
 
 #### Solution
 
-The SDT is a solution proposal that expresses personal information with a data structure called a trie, similar to a Merkle tree. SDT provides three key features: data integrity, selective disclosure, and proof of absence.
+The SDT is a solution proposal that expresses personal information with a data structure called a trie, similar to a Merkle tree. SDT provides two key features; selective disclosure and proof of non-existence.
 
 SDT creates a root proof similar to a `Merkle Tree` but its branches have keys like `Merkle Patricia Trie`. A branch node's proof is obtained from the proofs of its child nodes. As an example, the proof of the following tree is a summary of the ordered JSON data consisting of the `personal` and `address` proofs. The proof of a leaf node is the hash of salt and value. Consider the following information:
 
@@ -55,6 +55,7 @@ name_proof = hash({ "value": "Adem", "salt": "0x.." })
 // Not: hash method is sha-256 and byte encoding is hexadecimal
 
 ``` 
+
 This proof, similar to a Merkle root, represents a summary of all information, thus ensuring data integrity. So how is selective disclosure possible? For example, consider a verifier who only needs the person's name. SDT expresses this query using a GraphQL-like query structure:
 
 ```graphql
@@ -77,7 +78,7 @@ This query produces a result that reveals only the person's name, but also provi
    }                                       
 }
 ```
-Now, let's discuss how proof of absence is achieved. Suppose a verifier wants to see the person's phone number.
+Now, let's discuss how proof of non-existence is achieved. Suppose a verifier wants to see the person's phone number.
 
 ```graphql
 {
@@ -86,7 +87,7 @@ Now, let's discuss how proof of absence is achieved. Suppose a verifier wants to
   }
 }
 ```
-In this case, the data owner can prove that they don't have a phone number as follows:
+In this case, the owner can prove that they don't have a phone number as follows:
 
 ```json 
 {                                                                 
