@@ -1,135 +1,103 @@
-# Selective Disclosure Trie
+### Selective Disclosure Trie
 
-> "Selective Disclosure Trie" is a solution proposal that uses a data structure called a trie, to enable efficient and secure selective disclosure of fields from verifiable credentials for privacy enhancement 
+> Inspired by Merkle Patricia Trie
 
-> Inspired by Merkle Patricia Trie 
+#### Problem
 
-Verifiable credentials are digital representations of claims made about an individual, such as their name, age, and qualifications. They have the potential to revolutionize the way in which we prove our identity and share information online. However, in order for verifiable credentials to be widely adopted, privacy concerns must be addressed.
+As the saying goes, "Great deceivers do not lie", in other words, small deceivers try to deceive people by lying. So, the truth doesn't always represent the entirety of reality.
 
-One such concern is the disclosure of unnecessary information. When sharing a verifiable credential, an individual may be required to reveal more information than is necessary for the intended purpose. For example, an individual may be asked to share their entire passport when all that is needed is their name and date of birth. This not only breaches the individual's privacy, but also increases the risk of sensitive information being compromised.
+To illustrate this problem, consider the following analogy:
 
-This is where the "Selective Disclosure Trie" proposal comes in. The solution is based on organizing the fields of a credential in a data structure called a trie. A trie is a tree-like data structure that allows for efficient and secure storage and retrieval of large numbers of fields. Each node in the trie represents a field of the credential.
+> Alice:  Bob, just tell me the truth. Do you swear that you love me?
 
-With the Selective Disclosure Trie, individuals can choose which branches of the trie to reveal, thereby disclosing only the necessary information. This enhances privacy by allowing individuals to share only the information that is required for a specific purpose, rather than the entire credential.
+> Bob:  I swear, I love you.
 
-The Selective Disclosure Trie also enables an issuer to sign only a particular proof of interest.  
 
-In conclusion, the privacy is an essential aspect in verifiable credential ecosystem, and the Selective Disclosure Trie proposal provides a solution that addresses this concern. By allowing individuals to selectively disclose only the necessary fields of a credential, the proposal enhances privacy and security.
+> Eve: Bob, just tell me the truth. Do you swear that you love me?
 
-Consider the example of a verifiable credential in JSON format, with personal information.
+> Bob: I swear, I love you.
+
+To avoid this situation, Alice would need to ask Bob to "prove that she is the only one in his heart". However, Bob would not want to completely open up his heart, because the fact that Alice is in his heart only concerns Alice, and furthermore, who his friend is doesn't concern Alice at all. As a result, Bob would need to prove that the love compartment in his heart belongs only to Alice.
+
+In the digital world, let's propose a solution for this analogy related to privacy and proof of uniqueness.
+
+#### Solution
+
+The SDT is a solution proposal that expresses personal information with a data structure called a trie, similar to a Merkle tree. SDT provides three key features: data integrity, selective disclosure, and proof of absence.
+
+SDT creates a root proof similar to a `Merkle Tree` but its branches have keys like `Merkle Patricia Trie`. A branch node's proof is obtained from the proofs of its child nodes. As an example, the proof of the following tree is a summary of the ordered JSON data consisting of the `personal` and `address` proofs. The proof of a leaf node is the hash of salt and value. Consider the following information:
+
 
 ```json
 {
-  "personal": {
-    "name": {
-      "salt": "random",
-      "raw": "Adem"
-    },
-    "birthday": {
-      "salt": "random",
-      "raw": "1.1.1984"
-    }
-  },
-  "addresses": {
-    "home": {
-      "zipcode": {
-        "salt": "random",
-        "raw": "2020"
-      },
-      "city": {
-        "salt": "random",
-        "raw": "homecity"
+   "personal": {
+     "name": "Adem",
+     "surname": "Çağlın"
+   }
+   "adddress": {
+     "work": {
+        "city": "A City",
+        "zipcode": 123456
       }
-    },
-    "work": {
-      "zipcode": {
-        "salt": "random",
-        "raw": "2030"
-      },
-      "city": {
-        "salt": "random",
-        "raw": "workcity"
-      }
-    }
+   }
+}
+```
+
+The pseudocode for generating proofs from this information is as follows:
+
+```javascript 
+root_proof = hash({ "adddress": "<proof>", "personal": "<proof>" })
+
+personal_proof = hash({ "name": "<proof>", "surname": "<proof>" })
+
+name_proof = hash({ "value": "Adem", "salt": "0x.." })
+
+// Not: hash method is sha-256 and byte encoding is hexadecimal
+
+``` 
+This proof, similar to a Merkle root, represents a summary of all information, thus ensuring data integrity. So how is selective disclosure possible? For example, consider a verifier who only needs the person's name. SDT expresses this query using a GraphQL-like query structure:
+
+```graphql
+{
+  personal {
+    name
   }
 }
 ```
 
-Consider a query for certain fields from the verifiable credential, the query could be like this(like a graphql query)
+This query produces a result that reveals only the person's name, but also provides proofs for `surname` and `address`:
 
+
+```json 
+{                                                                 
+  "adddress": "0x.."                                                   
+  "personal": {                                                  
+      "name": { "value": "Adem", "salt": "0x.." },                                                                                
+      "surname": "0x.."
+   }                                       
+}
 ```
+Now, let's discuss how proof of absence is achieved. Suppose a verifier wants to see the person's phone number.
+
+```graphql
 {
-    personal{
-      name
-    }
-    addresses{
-      work{
-        city
-      }
-    }
+  phones {
+    cell
   }
-  ```
-  
-When the Selective Disclosure Trie is used to parse the above query, It returns only the requested fields, along with their associated proofs, in a tree-like structure, result is:
+}
+```
+In this case, the data owner can prove that they don't have a phone number as follows:
 
-![image](./sdt.png)
-
-
-```javascript
-{
-  "key": "/", 
-  "proof": "a268...", // Root proof which means fingerprint of entire credential 
-  "children": [
-    {
-      "key": "/personal/", // Personal Root proof which means fingerprint of entire personal claims
-      "proof": "f18c...",
-      "children": [
-        {
-          "key": "/personal/name/", // Leaf node has a claim and optinal salt
-          "proof": "ea43...", //  Proof is sha256 hash of value 
-          "value": {
-            "salt": "random", // To prevent rainbow attack
-            "raw": "Adem"
-          }
-        },
-        {
-          "key": "/personal/birthday/",
-          "proof": "93cc..."
-        }
-      ]
-    },
-    {
-      "key": "/addresses/",
-      "proof": "bb63...",
-      "children": [
-        {
-          "key": "/addresses/home/",
-          "proof": "b29f..."
-        },
-        {
-          "key": "/addresses/work/",
-          "proof": "4075...",
-          "children": [
-            {
-              "key": "/addresses/work/zipcode/",
-              "proof": "8561..."
-            },
-            {
-              "key": "/addresses/work/city/",
-              "proof": "431d...",
-              "value": {
-                "salt": "random",
-                "raw": "workcity"
-              }
-            }
-          ]
-        }
-      ]
-    }
-  ]
+```json 
+{                                                                 
+  "adddress": "0x.."                                                   
+  "personal": "0x.."                                     
 }
 ```
 
-As you can see from the example, the Selective Disclosure Trie can process the query and returns only the requested fields, which allows individuals to selectively disclose only the necessary fields of a credential, rather than the entire credential, this way it enables privacy enhancement without revealing unnecessary information and it also ensures that only authorized parties can access the information and that the information is tamper-proof, so it's a powerful tool for managing verifiable credentials and their associated data, while maintaining user privacy.
+You can visit the following links to get more details:
 
-Playground https://tudnme.csb.app/
+Playground: https://tudnme.csb.app/
+
+Rust implementation: https://github.com/idp2p/sdt
+
