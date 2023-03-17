@@ -25,7 +25,7 @@ In the digital world, let's propose a solution for this analogy related to priva
 
 The SDT is a solution proposal that expresses personal information with a data structure called a trie, similar to a Merkle tree. SDT provides two key features; selective disclosure and proof of non-existence.
 
-SDT creates a root proof similar to a `Merkle Tree` but its branches have keys like `Merkle Patricia Trie`. A branch node's proof is obtained from the proofs of its child nodes. As an example, the proof of the following tree is a summary of the ordered JSON data consisting of the `personal` and `address` proofs. The proof of a leaf node is the hash of salt and value. Consider the following information:
+SDT creates a root proof similar to a `Merkle Tree` but its branches have keys like `Merkle Patricia Trie`. A branch node's proof is obtained from the proofs of its child nodes. As an example, the proof of the following tree is a summary of the ordered JSON data consisting of the `personal` and `addresses` proofs. The proof of a leaf node is the hash of salt and value. Consider the following information:
 
 
 ```json
@@ -34,7 +34,7 @@ SDT creates a root proof similar to a `Merkle Tree` but its branches have keys l
      "name": "Adem",
      "surname": "Çağlın"
    }
-   "adddress": {
+   "addresses": {
      "work": {
         "city": "A City",
         "zipcode": 123456
@@ -46,7 +46,7 @@ SDT creates a root proof similar to a `Merkle Tree` but its branches have keys l
 The pseudocode for generating proofs from this information is as follows:
 
 ```javascript 
-root_proof = hash({ "adddress": "<proof>", "personal": "<proof>" })
+root_proof = hash({ "addresses": "<proof>", "personal": "<proof>" })
 
 personal_proof = hash({ "name": "<proof>", "surname": "<proof>" })
 
@@ -71,7 +71,7 @@ This query produces a result that reveals only the person's name, but also provi
 
 ```json 
 {                                                                 
-  "adddress": "0x.."                                                   
+  "addresses": "0x.."                                                   
   "personal": {                                                  
       "name": { "value": "Adem", "salt": "0x.." },                                                                                
       "surname": "0x.."
@@ -91,7 +91,7 @@ In this case, the owner can prove that they don't have a phone number as follows
 
 ```json 
 {                                                                 
-  "adddress": "0x.."                                                   
+  "addresses": "0x.."                                                   
   "personal": "0x.."                                     
 }
 ```
