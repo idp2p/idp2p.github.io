@@ -4,7 +4,7 @@
 
 #### Problem
 
-As the saying goes, "Great deceivers do not lie", in other words, small deceivers try to deceive people by lying. While the truth may reveal a part of reality, it does not always provide a complete picture of the whole.
+As the saying goes, "Great deceivers do not lie", in other words, small deceivers try to deceive people by lying. They deceive people by saying partial truth. While the truth may reveal a part of reality, it does not always provide a complete picture of the whole.
 
 To illustrate this problem, consider the following analogy:
 
@@ -19,7 +19,7 @@ To illustrate this problem, consider the following analogy:
 
 To avoid this situation, Alice would need to ask Bob to "prove that she is the only one in his heart". However, Bob would not want to completely open up his heart, because the fact that Alice is in his heart only concerns Alice, and furthermore, who his friend is doesn't concern Alice at all. As a result, Bob would need to prove that the love compartment in his heart belongs only to Alice.
 
-In the digital world, let's propose a solution for this analogy related to privacy and proof of uniqueness.
+In the digital world, let's propose a solution for this analogy related to privacy and proof of non-existence.
 
 #### Solution
 
