@@ -16,27 +16,41 @@ See also (related topics):
 
 > `Alice` has a secret message for `Bob`, but she doesn't know who `Bob` is or where he is. 
 
-DIDs and DIDComm try to solve this problem with using 
+DIDs and DIDComm solve this by providing decentralized identifiers that include service endpoints and mediator support,
+enabling Alice to discover Bob's DID and securely send her message through these endpoints.
+This allows communication without needing to know Bob’s personal details or his physical and network location in advance.
+
+KERI (Key Event Receipt Infrastructure) enables a truly decentralized, ledger-independent identity system by managing identities through secure, self-sovereign keys and event-based updates
+
+This ensures that Bob’s identity is secure and independent, free from centralized registries.
+
+However,
+
+- How to notify keri events to subscribers(witness)
+- How to deliver or broadcast a message to subscribers(pubsub)
+- Bonus: How to utilize by webassembly in identity area 
 
 ## Solution(idp2p)
 
-### id
+### ID
 
-#### values
+> What is an identity and its features 
 
-- Identifier
-- Events
-- Signers
-- State
-- Peers
+#### Values
 
-#### webassembly
+> What are the values an identity has
 
-- Portable
-- Language Independent
+#### WebAssembly
 
+> Why using WebAssembly for KERI
 
-### p2p
+- Deterministic 
+- Security and Isolation
+- Portable(You don't need to install new software, just download binary and use it)
+- Language Agnostic(You can use another language for different versions)
+- Multiple Concurrent Versions
+
+### P2P
 
 ## idp2p
 
