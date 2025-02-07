@@ -22,23 +22,23 @@ This allows communication without needing to know Bob’s personal details or hi
 
 KERI (Key Event Receipt Infrastructure) enables a truly decentralized, ledger-independent identity system by managing identities through secure, self-sovereign keys and event-based updates
 
-This ensures that Bob’s identity is secure and independent, free from centralized registries.
-
 However,
 
+- How to resolve the decentralized id
 - How to notify keri events to subscribers(witness)
-- How to deliver or broadcast a message to subscribers(pubsub)
-- Bonus: How to utilize by webassembly in identity area 
+- How to handle uniqueness of identity without witness
+- How to send or broadcast a message to subscribers(pubsub)
+- How to handle protocol changes and working with multi impl(webassembly)
 
 ## Solution(idp2p)
 
+> 
+
 ### ID
 
-> What is an identity and its features 
+> KERI implementation with webassembly
 
-#### Values
 
-> What are the values an identity has
 
 #### WebAssembly
 
@@ -52,7 +52,34 @@ However,
 
 ### P2P
 
-## idp2p
+## IdP2P
+
+### Resolve
+
+> Alice wants to connect Bob 
+
+- Alice publishs a `Resolve` message with the topic(Bob's id)
+- Bob's delegator or owner publishs a `Provide` with same topic, the Provide message has `provider peers` and `message_id` 
+- Alice send a request to one of the provider peer in order to retrieve Bob's identity info
+- When the provider sends response, Alice verifies the identity and store it
+
+
+### Notify Event
+
+> Alice has an keri event and she wants to notify her subscribers
+
+- Whenever an identity event occurs, the identity owner publishs an event with own id topic
+- When a subscriber receives the event, it verifies first then store the event
+
+### Notify Message
+
+> Alice wants to send a message to Bob
+
+
+### Mediator Mechanism
+
+> Alice needs a network agent in order to publishs and receives messages
+
 
 ![w:5-1000](idp2p-diagram.png) 
 
