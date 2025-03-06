@@ -16,19 +16,19 @@ See also (related topics):
 
 > `Alice` has a secret message for `Bob`, but she doesn't know who `Bob` is or where he is. 
 
-DIDs and DIDComm solve this by providing decentralized identifiers that include service endpoints and mediator support,
-enabling Alice to discover Bob's DID and securely send her message through these endpoints.
-This allows communication without needing to know Bob’s personal details or his physical and network location in advance.
+DIDs and DIDComm address this challenge by providing decentralized identifiers with built‐in service endpoints and mediator support. This allows Alice to discover Bob's DID and send her message securely.
 
-KERI (Key Event Receipt Infrastructure) enables a truly decentralized, ledger-independent identity system by managing identities through secure, self-sovereign keys and event-based updates
+KERI (Key Event Receipt Infrastructure) further strengthens the system by managing identities in a truly decentralized, ledger-independent way. It uses secure, self‑sovereign keys and event-based updates to maintain identity integrity.
 
-However,
+While DIDs, DIDComm, and KERI provide a robust framework for decentralized messaging and identity management, several challenges remain to fully realize a seamless self‑sovereign identity ecosystem. Addressing these challenges is essential for ensuring reliable identity resolution, efficient communication, and long‑term protocol evolution. The key challenges include:
 
-- How to resolve the decentralized id
-- How to notify keri events to subscribers(witness)
-- How to handle uniqueness of identity without witness
-- How to send or broadcast a message to subscribers(pubsub)
-- How to handle protocol changes and working with multi impl(webassembly)
+- **DID Resolution:** How to reliably resolve a decentralized identifier.
+- **Event Notification:** How to efficiently notify subscribers about KERI events.
+- **Ensuring Uniqueness:** How to maintain identity uniqueness.
+- **Broadcasting:** How to send or broadcast messages to multiple subscribers.
+- **Protocol Evolution:** How to manage identity protocol changes and support multiple implementations.
+
+This overview lays the groundwork for addressing these challenges within a self-sovereign identity ecosystem.
 
 ## Solution(idp2p)
 
