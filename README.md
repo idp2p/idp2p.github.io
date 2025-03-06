@@ -34,6 +34,10 @@ This overview lays the groundwork for addressing these challenges within a self-
 
 > Peer to peer identity protocol based on libp2p and keri
 
+The idp2p protocol uses pubsub model for solution
+
+![w:5-1000](idp2p-pubsub.png) 
+
 ![w:5-1000](idp2p-diagram.png) 
 
 ### ID
