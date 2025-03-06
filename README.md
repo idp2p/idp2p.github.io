@@ -12,7 +12,7 @@ See also (related topics):
 * [IPFS](https://ipfs.io/)
 
 
-## Problem
+## The Problem
 
 > `Alice` has a secret message for `Bob`, but she doesn't know who `Bob` is or where he is. 
 
@@ -30,9 +30,11 @@ While DIDs, DIDComm, and KERI provide a robust framework for decentralized messa
 
 This overview lays the groundwork for addressing these challenges within a self-sovereign identity ecosystem.
 
-## Solution(idp2p)
+## The Solution(idp2p)
 
-> 
+> Peer to peer identity protocol based on libp2p and keri
+
+![w:5-1000](idp2p-diagram.png) 
 
 ### ID
 
@@ -81,6 +83,5 @@ This overview lays the groundwork for addressing these challenges within a self-
 > Alice needs a network agent in order to publishs and receives messages
 
 
-![w:5-1000](idp2p-diagram.png) 
 
 ## Demo
