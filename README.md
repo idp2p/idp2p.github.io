@@ -32,9 +32,9 @@ This overview lays the groundwork for addressing these challenges within a self-
 
 ## The Solution(idp2p)
 
-> Peer to peer identity protocol based on libp2p and keri
+> Peer to peer identity protocol based on keri, webassembly and libp2p
 
-The idp2p protocol uses pubsub model for solution
+idp2p is a decentralized identity protocol that leverages peer-to-peer networks to enable secure and efficient identity discovery, notification, and messaging. It combines a pubsub (publish-subscribe) model with robust decentralized technologies to address modern identity challenges.
 
 ![w:5-1000](idp2p-pubsub.png) 
 
