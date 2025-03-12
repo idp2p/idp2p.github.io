@@ -22,10 +22,20 @@ KERI (Key Event Receipt Infrastructure) further strengthens the system by managi
 
 While DIDs, DIDComm, and KERI provide a robust framework for decentralized messaging and identity management, several challenges remain to fully realize a seamless self‑sovereign identity ecosystem. Addressing these challenges is essential for ensuring reliable identity resolution, efficient communication, and long‑term protocol evolution. The key challenges include:
 
-- **DID Resolution:** How to reliably resolve a decentralized identifier.
-- **Event Notification:** How to efficiently notify subscribers about KERI events.
-- **Messaging:** How to send or broadcast messages to multiple subscribers.
-- **Protocol Evolution:** How to manage identity protocol changes and support multiple implementations.
+- **DID Resolution:**  
+  How to reliably resolve a decentralized identifier.
+
+- **Event Notification:**  
+  How to efficiently notify subscribers about KERI events.
+
+- **Messaging:**  
+  How to send or broadcast messages to multiple subscribers.
+
+- **Protocol Evolution:**  
+  How to manage identity protocol changes and support multiple implementations.
+
+- **Service Endpoint:**  
+  How to manage the dynamic communication locations (service endpoints).
 
 This overview lays the groundwork for addressing these challenges within a self-sovereign identity ecosystem.
 
@@ -33,7 +43,9 @@ This overview lays the groundwork for addressing these challenges within a self-
 
 > Peer to peer identity protocol based on keri, webassembly and libp2p
 
-idp2p is a decentralized identity protocol that leverages peer-to-peer networks to enable secure and efficient identity discovery, notification, and messaging. It combines a pubsub (publish-subscribe) model with robust decentralized technologies to address modern identity challenges.
+idp2p is a decentralized identity protocol that leverages peer-to-peer networks to enable secure and efficient identity discovery, notification, and messaging. It combines a pubsub (libp2p gossipsub) model with `KERI` in order to solve the challenges.
+
+In idp2p, each DID is represented as a dedicated pub/sub topic on the libp2p network, unifying discovery, service endpoints, and messaging in a single mechanism—by subscribing to a DID’s topic, peers discover identities, learn and update service endpoints, and exchange both direct and broadcast messages in a decentralized manner.
 
 ![w:5-1000](idp2p-pubsub.png) 
 
@@ -166,10 +178,16 @@ sequenceDiagram
    The chosen provider peer responds by sending the broadcast message content to each subscriber.
 
 
-### Mediator Mechanism
+## Mediator Mechanism
 
-> Alice needs a network agent in order to publishs and receives messages
+In some cases, Alice relies on a dedicated network agent to publish and receive messages on her behalf, ensuring continuous availability and reliable delivery even if she’s offline.
 
+## Contributions
 
+The idp2p protocol and implementations are both work in progress. 
 
-## Demo
+Contributions are most welcome.
+
+## License
+
+[Apache License 2.0](LICENSE) 
