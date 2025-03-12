@@ -38,29 +38,36 @@ idp2p is a decentralized identity protocol that leverages peer-to-peer networks 
 
 ![w:5-1000](idp2p-pubsub.png) 
 
-![w:5-1000](idp2p-diagram.png) 
 
-### ID
+### Identity Layer
 
 > KERI implementation with webassembly
 
+  - **KERI (Key Event Receipt Infrastructure):**  
+    Manages identities using secure, event-based updates without relying on a central ledger.
+  - **WebAssembly:**  
+    Ensures deterministic execution, security, and portability, allowing the identity layer to run seamlessly across platforms.
 
 
-#### WebAssembly
+### Peer-to-Peer (P2P) Network Layer
 
-> Why using WebAssembly for KERI
+> Based on libp2p gossipsub protocol
 
-- Deterministic 
-- Security and Isolation
-- Portable(You don't need to install new software, just download binary and use it)
-- Language Agnostic(You can use another language for different versions)
-- Multiple Concurrent Versions
+```mermaid
+sequenceDiagram
+    title Resolve
 
-### P2P
+    participant Alice
+    participant BobsDelegator
+    participant ProviderPeer
 
-## IdP2P
-
-### Resolve
+    Alice->>BobsDelegator: Publish Resolve (Bob's ID topic)
+    BobsDelegator->>Alice: Provide (providers, message_id)
+    Alice->>ProviderPeer: Request Identity Info
+    ProviderPeer->>Alice: Response with Identity
+    Note over Alice: Verify and store identity
+```
+#### Resolve
 
 > Alice wants to connect Bob 
 
@@ -70,16 +77,23 @@ idp2p is a decentralized identity protocol that leverages peer-to-peer networks 
 - When the provider sends response, Alice verifies the identity and store it
 
 
-### Notify Event
+#### Notify Event
 
 > Alice has an keri event and she wants to notify her subscribers
 
 - Whenever an identity event occurs, the identity owner publishs an event with own id topic
 - When a subscriber receives the event, it verifies first then store the event
 
-### Notify Message
+#### Notify Message
 
-> Alice wants to send a message to Bob
+> Alice wants to send a message to Bob 
+
+- Alice publishs a `Message` message with message id and providers for the topic(Bob's id)
+
+- When Bob's delegator or owner receives the message, it sends a request to get the message
+
+- When the provider sends response, Bob receives the message
+
 
 
 ### Mediator Mechanism
