@@ -24,8 +24,7 @@ While DIDs, DIDComm, and KERI provide a robust framework for decentralized messa
 
 - **DID Resolution:** How to reliably resolve a decentralized identifier.
 - **Event Notification:** How to efficiently notify subscribers about KERI events.
-- **Ensuring Uniqueness:** How to maintain identity uniqueness.
-- **Broadcasting:** How to send or broadcast messages to multiple subscribers.
+- **Messaging:** How to send or broadcast messages to multiple subscribers.
 - **Protocol Evolution:** How to manage identity protocol changes and support multiple implementations.
 
 This overview lays the groundwork for addressing these challenges within a self-sovereign identity ecosystem.
@@ -39,7 +38,7 @@ idp2p is a decentralized identity protocol that leverages peer-to-peer networks 
 ![w:5-1000](idp2p-pubsub.png) 
 
 
-### Identity Layer
+## Identity Layer
 
 > KERI implementation with webassembly
 
@@ -49,51 +48,122 @@ idp2p is a decentralized identity protocol that leverages peer-to-peer networks 
     Ensures deterministic execution, security, and portability, allowing the identity layer to run seamlessly across platforms.
 
 
-### Peer-to-Peer (P2P) Network Layer
+## Peer-to-Peer (P2P) Network Layer
 
 > Based on libp2p gossipsub protocol
 
+### Resolve
+
+> Alice wants to resolve Bob's ID
+
+1. **Alice Publishes a `Resolve` Message**  
+   Alice begins by publishing a `Resolve` message onto the network. This message includes Bob’s ID as the topic she wants to resolve.
+
+2. **Bob Publishes a `Provide` Message**  
+   Upon noticing that there is a `Resolve` request for his ID, Bob publishes a `Provide` message with the same topic (Bob’s ID). This message specifies a list of peers (called “provider peers”) who can supply the necessary identity information.
+
+3. **Alice Requests Bob’s Identity from a Provider Peer**  
+   After receiving Bob’s `Provide` message, Alice selects one of the provider peers and sends a direct request, asking for Bob’s identity data.
+
+4. **Provider Peer Sends Response**  
+   The selected provider peer responds by sending Bob’s identity information to Alice.
+
+5. **Alice Verifies and Stores Bob’s Identity**  
+   Once the response is received, Alice verifies the authenticity of Bob’s identity data. Upon successful verification, she stores Bob’s identity for future reference.
+
+---
+
 ```mermaid
 sequenceDiagram
-    title Resolve
-
     participant Alice
-    participant BobsDelegator
+    participant Bob
+    participant P2PNet as P2P Network
     participant ProviderPeer
 
-    Alice->>BobsDelegator: Publish Resolve (Bob's ID topic)
-    BobsDelegator->>Alice: Provide (providers, message_id)
-    Alice->>ProviderPeer: Request Identity Info
-    ProviderPeer->>Alice: Response with Identity
-    Note over Alice: Verify and store identity
+    Alice->>P2PNet: Publish `Resolve` (topic = Bob's ID)
+    Bob->>P2PNet: Publish `Provide` (topic = Bob's ID, includes provider peers)
+    Alice->>ProviderPeer: Request Bob's identity
+    ProviderPeer->>Alice: Return Bob's identity data
+    Alice->>Alice: Verify authenticity & store Bob's identity
+
 ```
-#### Resolve
-
-> Alice wants to connect Bob 
-
-- Alice publishs a `Resolve` message with the topic(Bob's id)
-- Bob's delegator or owner publishs a `Provide` with same topic, the Provide message has `provider peers` and `message_id` 
-- Alice send a request to one of the provider peer in order to retrieve Bob's identity info
-- When the provider sends response, Alice verifies the identity and store it
-
-
-#### Notify Event
+### Notify Event
 
 > Alice has an keri event and she wants to notify her subscribers
 
-- Whenever an identity event occurs, the identity owner publishs an event with own id topic
-- When a subscriber receives the event, it verifies first then store the event
+1. **Identity Owner Publishes Event**  
+   Alice, acting as the identity owner, generates a KERI event and publishes it to the network using her own ID as the topic.
 
-#### Notify Message
+2. **Network Notifies Subscribers**  
+   The P2P network delivers the event to Alice’s subscribers.
+
+3. **Subscriber Verifies and Stores Event**  
+   Upon receiving the event, each subscriber verifies the event’s integrity/authenticity and, if valid, stores the event locally.
+
+
+```mermaid
+sequenceDiagram
+    participant Alice as Alice (Identity Owner)
+    participant P2P as P2P Network
+    participant Subscriber as Subscriber
+
+    Alice->>P2P: Publish KERI event (topic = Alice's ID)
+    P2P->>Subscriber: Notify event
+    Subscriber->>Subscriber: Verify event
+    Subscriber->>Subscriber: Store event
+```
+
+### Notify Direct Message
 
 > Alice wants to send a message to Bob 
 
-- Alice publishs a `Message` message with message id and providers for the topic(Bob's id)
 
-- When Bob's delegator or owner receives the message, it sends a request to get the message
+1. **Alice Publishes a `Message`**  
+   Alice publishes a `Message` onto the network with:
+   - **Topic**: Bob’s ID  
+   - **Message ID**: A unique identifier for the message  
+   - **Providers**: A list of provider peers that can supply the message content  
 
-- When the provider sends response, Bob receives the message
+2. **Bob Notices the New Message**  
+   The P2P network (or whichever messaging infrastructure is used) notifies Bob that there is a new message for him (identified by the `Message ID`).
 
+3. **Bob Requests the Message**  
+   Bob sends a request to one of the listed provider peers to fetch the actual message content.
+
+4. **Provider Sends the Message**  
+   The provider peer responds with the message, and Bob receives it.
+
+
+```mermaid
+sequenceDiagram
+    participant Alice
+    participant Bob
+    participant P2PNet as P2P Network
+    participant ProviderPeer
+
+    Alice->>P2PNet: Publish `Message` (topic = Bob's ID, message ID, provider peers)
+    P2PNet->>Bob: Notify new `Message` (message ID)
+    Bob->>ProviderPeer: Request message (using message ID)
+    ProviderPeer->>Bob: Send message content
+```
+
+### Notify Broadcast Message
+
+> Alice wants to publish for all subsribers
+
+1. **Alice Publishes a Broadcast Message**  
+   - **Topic**: Alice’s ID  
+   - **Message ID**: A unique identifier  
+   - **Providers**: A list of provider peers (where the message content can be fetched)
+
+2. **Network Notifies All Subscribers**  
+   Any subscriber that is subscribed to Alice’s ID receives a notification about the new broadcast message.
+
+3. **Subscribers Request the Broadcast Message**  
+   Each subscriber selects a provider peer and requests the message content using the `Message ID`.
+
+4. **Provider Peer Delivers the Message**  
+   The chosen provider peer responds by sending the broadcast message content to each subscriber.
 
 
 ### Mediator Mechanism
