@@ -1,222 +1,337 @@
-# IDP2P
+# idp2p
 
-> `Experimental`, inspired by `ipfs`, `did:peer` and `keri`
+> `Experimental`, inspired by `ipfs`, and `keri`
 
 ## Background
 
 See also (related topics):
 
 * [Decentralized Identifiers (DIDs)](https://w3c.github.io/did-core)
-* [Verifiable Credentials](https://www.w3.org/TR/vc-data-model/)
-* [IPFS](https://ipfs.io/)
-* [LIBP2P](https://libp2p.io/)
-* [Key DID](https://github.com/w3c-ccg/did-method-key/)
-* [Peer DID](https://identity.foundation/peer-did-method-spec/)
 * [Key Event Receipt Infrastructure](https://keri.one//)
-
-## Problem
-
-Each did method uses its own way to implement decentralized identity.
-Most of them are based on a public source of truth such as a `blockchain`, `dlt`, `database` or similar.
-Others are simple, self-describing methods and don't depend on any ledger technology e.g. `did:peer`, `did:key`, `keri`.
-Each method has its own pros and cons with respect to [design-goals](https://www.w3.org/TR/did-core/#design-goals).
-
-## IDP2P Solution 
-
-`IDP2P` is a peer-to-peer identity protocol which enables a controller to create, manage and share its own proofs as well as did documents. 
-The protocol is based on [libp2p](https://libp2p.io/), in other words, it can be considered `ipfs` of decentralized identity. `IDP2P` has following features:
-
-- Self-describing identity (like `did:keri`, `did:peer`, `did:key`)
-- Based on `libp2p` pub-sub protocol, so it can be stored and resolved via network
-- P2P network provides one ledger per identity
-- Only identity owner and interested parties are responsible for storing and verifying identity
-- DIDComm can be achieved via pub-sub
-- Service endpoints are not necessary in document because identities can communicate directly via network
+* [DIDComm](https://didcomm.org/)
+* [IPFS](https://ipfs.io/)
 
 
-### Consensus Mechanism 
+## The Problem
 
-When an identity event has occured, the change is published over the `idp2p` network. All subscribers verify the new change and update their own ledger (if they consider the incoming change to be suitable).
+> `Alice` has a secret message for `Bob`, but she doesn't know who `Bob` is or where he is. 
 
-There are two pub-sub commands: 
+DIDs and DIDComm address this challenge by providing decentralized identifiers with built‐in service endpoints and mediator support. This allows Alice to discover Bob's DID and send her message securely.
 
-- `get`: when a peer wants to subscribe to an identity, it publishs a `get` command with `id` over the network. 
-- `post`: when a peer receives a `get` command or an identity change occured, it posts identity information to subscribers in order to reach a consensus.
+KERI (Key Event Receipt Infrastructure) further strengthens the system by managing identities in a truly decentralized, ledger-independent way. It uses secure, self‑sovereign keys and event-based updates to maintain identity integrity.
 
-![w:1000](idp2p-pubsub.gif) 
+While DIDs, DIDComm, and KERI provide a robust framework for decentralized messaging and identity management, several challenges remain to fully realize a seamless self‑sovereign identity ecosystem. Addressing these challenges is essential for ensuring reliable identity resolution, efficient communication, and long‑term protocol evolution. The key challenges include:
 
-An identity is also a topic to subscribe to (i.e. the ledger is based on subscription)
+- **DID Resolution:**  
+  How to reliably resolve a decentralized identifier.
 
-![w:1000](idp2p.drawio.png) 
+- **Event Notification:**  
+  How to efficiently notify subscribers about KERI events.
 
+- **Messaging:**  
+  How to know communication locations send messages to one or more subscribers.
 
-### Identity
+- **Protocol Evolution:**  
+  How to manage identity protocol changes and support multiple implementations.
 
-An `idp2p` identity includes a unique identifier, a microledger, and a DID document. 
+This overview lays the groundwork for addressing these challenges within a self-sovereign identity ecosystem.
 
-```json
-{
-    "id": "did:p2p:bagaaieratxin4o3iclo7ua3s3bbueds2uzfc5gi26mermevzb2etqliwjbla",
-    "microledger": {},
-    "document": {}
-}
-```
+## The Solution(idp2p)
 
-*`id`* is the unique identifier of identity. It uses id generation like `did:peer`. `id` should be generated in the following way: 
+> Peer to peer identity protocol based on keri, webassembly and libp2p
 
-- Generate an inception block
-- Get json string of the block
-- Convert it to bytes
-- Get SHA-256 digest of bytes
-- Encode it with multibase and multicodec(like `ipfs`)
+idp2p is a decentralized identity protocol that leverages peer-to-peer networks to enable secure and efficient identity discovery, notification, and messaging. It combines a pubsub (libp2p gossipsub) model with `KERI` in order to solve the challenges.
 
-*sample id*: `bagaaieratxin4o3iclo7ua3s3bbueds2uzfc5gi26mermevzb2etqliwjbla`
+In idp2p, each DID is represented as a dedicated pub/sub topic on the libp2p network, unifying discovery and messaging in a single mechanism—by subscribing to a DID’s topic, peers discover identities, learn and update service endpoints, and exchange both direct and broadcast messages in a decentralized manner.
 
-The `microledger` represents backing storage of the identity and it includes id, inception, and events for the identity
-
-```json
-  {
-    "inception": {},
-    "events": []
-  }
-```
-
-`inception` includes `keyType`, `next`, and `recovery` public key digests
-
-```json
-{
-  "keyType": "Ed25519VerificationKey2020",
-  "nextKeyDigest": "<base32 value of next public key digest",
-  "recoveryKeyDigest": "<base32 value of recovery public key digest"
-}
-```
-
-`events` is array of identity changes wherein each event is linked to the previous one. The first event is linked inception block.
-
-![w:1000](microledger.drawio.png) 
+![w:5-1000](idp2p-pubsub.png) 
 
 
-```json
-{
-    "payload": {
-      "previous": "<inception-hash>",
-      "signerKey": "by5gtwpufy4zfnog4j..",
-      "nextKeyDigest": "by5gtwpufy4zfnog4j..",
-      "change": {
-        "type": "SetDocument",
-        "value": "bdu3gqtjc6ks52.."
-      },
-      "timestamp": 1642418658
-    },
-    "proof": "bx6svqb6if5yaflgoumdff7j.."
-}
-```
+## Identity Layer
 
-There are three event types:
+> KERI implementation with webassembly
 
-- `SetDocument`: proof of did document change, requires `value` property which is a hash of the did document.
-- `SetProof`: any proof about identity,  requires `key` and `value` properties.
-- `Recover` recovery proof of identity requires `keyType` and `recoveryKeyDigest` properties.
+  - **KERI (Key Event Receipt Infrastructure):**  
+    Manages identities using secure, event-based updates without relying on a central ledger.
+  - **WebAssembly:**  
+    Ensures deterministic execution, security, and portability, allowing the identity layer to run seamlessly across platforms.
+<details>
+<summary>
+  Model of the identity layer(webassembly interface types)
+</summary>
+  
+```wit
+interface types {
+    // A signer in the identity microledger
+    record id-signer {
+        // Identifier of the signer e.g. "signer"
+        id: string,
+        // Public key bytes of the signer
+        public-key: list<u8>,
+    }
 
-`did_doc` is described in [DIDs Spec](https://www.w3.org/TR/did-core/). Only the latest document is stored in the identity.
+    // Possible kinds of claim values
+    variant id-claim-value-kind {
+        // Textual claim (e.g. "Alice")
+        text(string),
+        // Raw bytes claim (e.g. image data)
+        bytes(list<u8>),
+    }
 
-```json
-{
-    "id": "did:p2p:bagaaieratxin..",
-    "controller": "did:p2p:bagaaieratxi..",
-    "@context": [
-        "https://www.w3.org/ns/did/v1",
-        "https://w3id.org/security/suites/ed25519-2020/v1",
-        "https://w3id.org/security/suites/x25519-2020/v1"
-    ],
-    "verificationMethod": [...],
-    "assertionMethod": ["did:p2p:bagaaieratxib#wtyb2xhyvxolbd.."],
-    "authentication": ["did:p2p:bagaaieratxib#3txadadmtke6d.."],
-    "keyAgreement": ["did:p2p:bagaaieratxib#cnzphk5djc3bt64.."]
-}
-```
+    // A claim in the identity microledger
+    record id-claim {
+        // Key of the claim (e.g. "name")
+        key: string,
+        // Value of the claim, encoded based on key type
+        value: id-claim-value-kind,
+    }
 
+    // The inception event for an identity
+    record id-inception {
+        // Creation timestamp of the identity
+        timestamp: s64,
+        // Signature threshold for the current signers
+        threshold: u8,
+        // Current signers
+        signers: list<id-signer>,
+        // Next signature threshold to be used after rotation
+        next-threshold: u8,
+        // Identifiers of the signers that will be used after rotation
+        next-signers: list<string>,
+        // List of initial claims associated with the identity
+        claims: list<id-claim>,
+    }
 
-#### *Full example*
+    // The rotation event for an identity
+    record id-rotation {
+        // The newly introduced signers
+        signers: list<id-signer>,
+        // Next signature threshold after this rotation
+        next-threshold: u8,
+        // Identifiers of the signers that will be used after the next rotation
+        next-signers: list<string>,
+    }
 
-```json
-{
-    "id": "did:p2p:bagaaieratxin4o3iclo7ua3s3bbueds2uzfc5gi26mermevzb2etqliwjbla",
-    "microledger": {
-        "inception": {
-            "keyType": "Ed25519VerificationKey2020",
-            "nextKeyDigest": "by5gtwpufy4..",
-            "recoveryKeyDigest": "bmb2cvioxfy65ej.."
-        },
-        "events": [
-            {
-                "payload": {
-                    "previous": "bagaaieratxin4o3iclo7u..",
-                    "signerKey": "by5gtwpufy4zfnog4j..",
-                    "nextKeyDigest": "b2wvipekepehi..",
-                    "change": {
-                        "type": "SetDocument",
-                        "value": "bdu3gqtjc6ks52.."
-                    },
-                    "timestamp": 1642418658
-                },
-                "proof": "bx6svqb6if5yaflgoumdff7j.."
-            },
-            {
-                "payload": {
-                    "previous": "bagaaieratxin4o3iclo7u..",
-                    "signerKey": "by5gtwpufy4zfnog4j..",
-                    "nextKeyDigest": "b2wvipekepehi..",
-                    "change": {
-                        "type": "SetProof",
-                        "key": "bnnsxs",
-                        "value": "bozqwy5lf"
-                    },
-                    "timestamp": 1642418658
-                },
-                "proof": "bwltjvobkxxq6.."
-            },
-            {
-                "payload": {
-                    "previous": "bagaaieratxin4o3iclo7u..",
-                    "signerKey": "by5gtwpufy4zfnog4j..",
-                    "nextKeyDigest": "b2wvipekepehi..",
-                    "change": {
-                        "type": "Recover",
-                        "keyType": "Ed25519VerificationKey2020",
-                        "recoveryKeyDigest": "bcut3s....."
-                    },
-                    "timestamp": 1642418658
-                },
-                "proof": "b3yo6vlymyn.."
-            }
-        ]
-    },
-    "document": {
-        "@context": [
-            "https://www.w3.org/ns/did/v1",
-            "https://w3id.org/security/suites/ed25519-2020/v1",
-            "https://w3id.org/security/suites/x25519-2020/v1"
-        ],
-        "id": "did:p2p:bagaaieratxin..",
-        "controller": "did:p2p:bagaaieratxi..",
-        "verificationMethod": [],
-        "assertionMethod": [
-            "did:p2p:bagaaieratxib#wtyb2xhyvxolbd.."
-        ],
-        "authentication": [
-            "did:p2p:bagaaieratxib#3txadadmtke6d.."
-        ],
-        "keyAgreement": [
-            "did:p2p:bagaaieratxib#cnzphk5djc3bt64.."
-        ]
+    // Variants of identity events
+    variant id-event-kind {
+        // Interaction event - should be signed with current keys
+        interaction(list<id-claim>),
+        // Rotation event - should be signed with next keys
+        rotation(id-rotation),
+        // Migration event - should be signed with next keys
+        migration(string),
+    }
+
+    // An event in the identity microledger
+    record id-event {
+        // Timestamp of the event
+        timestamp: s64,
+        // ID of the previous event
+        previous: string,
+        // Payload of the event
+        payload: id-event-kind,
     }
 }
+
+interface model {
+    use types.{id-signer, id-claim};
+
+    // A proof of identity event
+    record persisted-id-proof {
+        // Identifier of the signer
+        id: string,
+        // Public key bytes of the signer
+        pk: list<u8>,
+        // Signature bytes
+        sig: list<u8>,
+    }
+
+    // Persisted identity inception record
+    record persisted-id-inception {
+        // ID of the identity
+        id: string,
+        // Version of the protocol
+        version: string,
+        // Serialized inception payload
+        payload: list<u8>,
+    }
+
+    // Persisted identity event record
+    record persisted-id-event {
+        // ID of the identity
+        id: string,
+        // Version of the protocol
+        version: string,
+        // Serialized event payload
+        payload: list<u8>,
+        // One or more proofs of the event
+        proofs: list<persisted-id-proof>,
+    }
+
+    // A projection of the current state of an identity
+    record id-projection {
+        // Unique identifier of the identity
+        id: string,
+        // ID of the most recent event
+        event-id: string,
+        // Timestamp of the most recent event
+        event-timestamp: s64,
+        // Current signature threshold
+        threshold: u8,
+        // Next signature threshold for future rotations
+        next-threshold: u8,
+        // Current signers (list of signer records)
+        signers: list<id-signer>,
+        // Next signers' identifiers (CID codec should be 0xed)
+        next-signers: list<string>,
+        // All signers' identifiers that have ever participated
+        all-signers: list<string>,
+        // Current claims associated with the identity
+        claims: list<id-claim>,
+        // Next identity delegate (if any)
+        next-id: option<string>,
+    }
+}
+
+```
+</details>
+
+## Peer-to-Peer (P2P) Network Layer
+
+> Based on libp2p gossipsub protocol
+
+### Resolve
+
+> Alice wants to resolve Bob's ID
+
+1. **Alice Publishes a `Resolve` Message**  
+   Alice begins by publishing a `Resolve` message onto the network. This message includes Bob’s ID as the topic she wants to resolve.
+
+2. **Bob Publishes a `Provide` Message**  
+   Upon noticing that there is a `Resolve` request for his ID, Bob publishes a `Provide` message with the same topic (Bob’s ID). This message specifies a list of peers (called “provider peers”) who can supply the necessary identity information.
+
+3. **Alice Requests Bob’s Identity from a Provider Peer**  
+   After receiving Bob’s `Provide` message, Alice selects one of the provider peers and sends a direct request, asking for Bob’s identity data.
+
+4. **Provider Peer Sends Response**  
+   The selected provider peer responds by sending Bob’s identity information to Alice.
+
+5. **Alice Verifies and Stores Bob’s Identity**  
+   Once the response is received, Alice verifies the authenticity of Bob’s identity data. Upon successful verification, she stores Bob’s identity for future reference.
+
+---
+
+```mermaid
+sequenceDiagram
+    participant Alice
+    participant Bob
+    participant P2PNet as P2P Network
+    participant ProviderPeer
+
+    Alice->>P2PNet: Publish `Resolve` (topic = Bob's ID)
+    Bob->>P2PNet: Publish `Provide` (topic = Bob's ID, includes provider peers)
+    Alice->>ProviderPeer: Request Bob's identity
+    ProviderPeer->>Alice: Return Bob's identity data
+    Alice->>Alice: Verify authenticity & store Bob's identity
+
+```
+### Notify Event
+
+> Alice has an keri event and she wants to notify her subscribers
+
+1. **Identity Owner Publishes Event**  
+   Alice, acting as the identity owner, generates a KERI event and publishes it to the network using her own ID as the topic.
+
+2. **Network Notifies Subscribers**  
+   The P2P network delivers the event to Alice’s subscribers.
+
+3. **Subscriber Verifies and Stores Event**  
+   Upon receiving the event, each subscriber verifies the event’s integrity/authenticity and, if valid, stores the event locally.
+
+
+```mermaid
+sequenceDiagram
+    participant Alice as Alice (Identity Owner)
+    participant P2P as P2P Network
+    participant Subscriber as Subscriber
+
+    Alice->>P2P: Publish KERI event (topic = Alice's ID)
+    P2P->>Subscriber: Notify event
+    Subscriber->>Subscriber: Verify event
+    Subscriber->>Subscriber: Store event
 ```
 
-## Demo
+### Notify Direct Message
 
-![w:1000](idp2p-demo.gif)
+> Alice wants to send a message to Bob 
+
+
+1. **Alice Publishes a `Message`**  
+   Alice publishes a `Message` onto the network with:
+   - **Topic**: Bob’s ID  
+   - **Message ID**: A unique identifier for the message  
+   - **Providers**: A list of provider peers that can supply the message content  
+
+2. **Bob Notices the New Message**  
+   The P2P network (or whichever messaging infrastructure is used) notifies Bob that there is a new message for him (identified by the `Message ID`).
+
+3. **Bob Requests the Message**  
+   Bob sends a request to one of the listed provider peers to fetch the actual message content.
+
+4. **Provider Sends the Message**  
+   The provider peer responds with the message, and Bob receives it.
+
+
+```mermaid
+sequenceDiagram
+    participant Alice
+    participant Bob
+    participant P2PNet as P2P Network
+    participant ProviderPeer
+
+    Alice->>P2PNet: Publish `Message` (topic = Bob's ID, message ID, provider peers)
+    P2PNet->>Bob: Notify new `Message` (message ID)
+    Bob->>ProviderPeer: Request message (using message ID)
+    ProviderPeer->>Bob: Send message content
+```
+
+### Notify Broadcast Message
+
+> Alice wants to publish for all subsribers
+
+1. **Alice Publishes a Broadcast Message**  
+   - **Topic**: Alice’s ID  
+   - **Message ID**: A unique identifier  
+   - **Providers**: A list of provider peers (where the message content can be fetched)
+
+2. **Network Notifies All Subscribers**  
+   Any subscriber that is subscribed to Alice’s ID receives a notification about the new broadcast message.
+
+3. **Subscribers Request the Broadcast Message**  
+   Each subscriber selects a provider peer and requests the message content using the `Message ID`.
+
+4. **Provider Peer Delivers the Message**  
+   The chosen provider peer responds by sending the broadcast message content to each subscriber.
+
+
+## Key Highlights of the Protocol
+
+### Addressing
+
+In this protocol, messaging is not tied to a location-based address. Instead, the recipient’s ID itself serves as the address. Consequently, the idp2p service does not require a dedicated endpoint.
+
+### Encryption
+
+Messages are encrypted in transit using the built-in libp2p TLS layer. No additional encryption mechanism is provided by the protocol itself.
+
+### Publication and Retrieval
+
+When a message is sent to a specific ID, a summary of the message (including provider node details) is published via pubsub. Recipients then fetch the full message from the designated provider nodes.
+
+### Mediator Pattern
+
+For IDs that change frequently (non-stable IDs), the protocol suggests but does not mandate using a mediator pattern.
+
 
 ## Contributions
 
