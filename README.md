@@ -29,13 +29,10 @@ While DIDs, DIDComm, and KERI provide a robust framework for decentralized messa
   How to efficiently notify subscribers about KERI events.
 
 - **Messaging:**  
-  How to send or broadcast messages to multiple subscribers.
+  How to know communication locations send messages to one or more subscribers.
 
 - **Protocol Evolution:**  
   How to manage identity protocol changes and support multiple implementations.
-
-- **Service Endpoint:**  
-  How to manage the dynamic communication locations (service endpoints).
 
 This overview lays the groundwork for addressing these challenges within a self-sovereign identity ecosystem.
 
@@ -45,7 +42,7 @@ This overview lays the groundwork for addressing these challenges within a self-
 
 idp2p is a decentralized identity protocol that leverages peer-to-peer networks to enable secure and efficient identity discovery, notification, and messaging. It combines a pubsub (libp2p gossipsub) model with `KERI` in order to solve the challenges.
 
-In idp2p, each DID is represented as a dedicated pub/sub topic on the libp2p network, unifying discovery, service endpoints, and messaging in a single mechanism—by subscribing to a DID’s topic, peers discover identities, learn and update service endpoints, and exchange both direct and broadcast messages in a decentralized manner.
+In idp2p, each DID is represented as a dedicated pub/sub topic on the libp2p network, unifying discovery and messaging in a single mechanism—by subscribing to a DID’s topic, peers discover identities, learn and update service endpoints, and exchange both direct and broadcast messages in a decentralized manner.
 
 ![w:5-1000](idp2p-pubsub.png) 
 
@@ -59,6 +56,53 @@ In idp2p, each DID is represented as a dedicated pub/sub topic on the libp2p net
   - **WebAssembly:**  
     Ensures deterministic execution, security, and portability, allowing the identity layer to run seamlessly across platforms.
 
+```wit
+interface model {
+    use types.{id-signer, id-claim};
+
+    record persisted-id-proof {
+        id: string,
+        pk: list<u8>,
+        sig: list<u8>,
+    }
+
+    record persisted-id-inception {
+        id: string,
+        version: string,
+        payload: list<u8>,
+    }
+
+    record persisted-id-event {
+        id: string,
+        version: string,
+        payload: list<u8>,
+        proofs: list<persisted-id-proof>,
+    }
+
+    record id-projection {
+        // Identifier 
+        id: string,
+        // Last event id
+        event-id: string,
+        // Last event time
+        event-timestamp: s64,
+        // Threshold  
+        threshold: u8,
+        // Next threshold  
+        next-threshold: u8,
+        // Current signers
+        signers: list<id-signer>,
+        // CID codec should be 0xed 
+        next-signers: list<string>,
+        // All keys
+        all-signers: list<string>,
+        // All actions
+        claims: list<id-claim>,
+        // Delegate
+        next-id: option<string>,
+    }    
+}
+```
 
 ## Peer-to-Peer (P2P) Network Layer
 
@@ -178,9 +222,24 @@ sequenceDiagram
    The chosen provider peer responds by sending the broadcast message content to each subscriber.
 
 
-## Mediator Mechanism
+## Other
 
-In some cases, Alice relies on a dedicated network agent to publish and receive messages on her behalf, ensuring continuous availability and reliable delivery even if she’s offline.
+### Addressing
+
+In this protocol, messaging is not tied to a location-based address. Instead, the recipient’s ID itself serves as the address. Consequently, the idp2p service does not require a dedicated endpoint.
+
+### Encryption
+
+Messages are encrypted in transit using the built-in libp2p TLS layer. No additional encryption mechanism is provided by the protocol itself.
+
+### Publication and Retrieval
+
+When a message is sent to a specific ID, a summary of the message (including provider node details) is published via pubsub. Recipients then fetch the full message from the designated provider nodes.
+
+### Mediator Pattern
+
+For IDs that change frequently (non-stable IDs), the protocol suggests but does not mandate using a mediator pattern.
+
 
 ## Contributions
 
