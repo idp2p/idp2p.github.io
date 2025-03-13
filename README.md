@@ -56,7 +56,65 @@ In idp2p, each DID is represented as a dedicated pub/sub topic on the libp2p net
   - **WebAssembly:**  
     Ensures deterministic execution, security, and portability, allowing the identity layer to run seamlessly across platforms.
 
+Here is the wit(webassembly interface types) model of the identity layer:
+ 
 ```wit
+interface types {
+    /// A signer in the identity microledger
+    record id-signer {
+        /// Identifier of the signer e.g. "signer",
+        id: string,
+        /// Public key bytes of the signer,
+        public-key: list<u8>,
+    }
+
+    variant id-claim-value-kind {
+        text(string),
+        bytes(list<u8>),
+    }
+
+    /// A claim in the identity microledger
+    record id-claim {
+        /// Key of the claim e.g. "name", 
+        key: string,
+        /// Value of the claim encoded based on key type
+        value: id-claim-value-kind,
+    }
+
+    record id-inception {        
+        timestamp: s64,
+        threshold: u8,
+        signers: list<id-signer>,
+        next-threshold: u8,
+        next-signers: list<string>,
+        claims: list<id-claim>,
+    }
+
+    record id-rotation {
+        signers: list<id-signer>,
+        next-threshold: u8,
+        next-signers: list<string>,
+    }
+
+    variant id-event-kind {
+        // Should be signed with current keys
+        interaction(list<id-claim>),
+        // Should be signed with next keys
+        rotation(id-rotation),
+        // Should be signed with next keys
+        migration(string),
+    }
+
+    record id-event {
+        // Timestamp of event
+        timestamp: s64,
+        // Previous event id
+        previous: string,
+        // Event payload
+        payload: id-event-kind,
+    }    
+}
+
 interface model {
     use types.{id-signer, id-claim};
 
@@ -222,7 +280,7 @@ sequenceDiagram
    The chosen provider peer responds by sending the broadcast message content to each subscriber.
 
 
-## Other
+## Key Highlights of the Protocol
 
 ### Addressing
 
