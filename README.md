@@ -55,113 +55,146 @@ In idp2p, each DID is represented as a dedicated pub/sub topic on the libp2p net
     Manages identities using secure, event-based updates without relying on a central ledger.
   - **WebAssembly:**  
     Ensures deterministic execution, security, and portability, allowing the identity layer to run seamlessly across platforms.
-
-Here is the wit(webassembly interface types) model of the identity layer:
- 
+<details>
+<summary>
+  Here is the wit(webassembly interface types) model of the identity layer
+</summary>
+  
 ```wit
 interface types {
-    /// A signer in the identity microledger
+    // A signer in the identity microledger
     record id-signer {
-        /// Identifier of the signer e.g. "signer",
+        // Identifier of the signer e.g. "signer"
         id: string,
-        /// Public key bytes of the signer,
+        // Public key bytes of the signer
         public-key: list<u8>,
     }
 
+    // Possible kinds of claim values
     variant id-claim-value-kind {
+        // Textual claim (e.g. "Alice")
         text(string),
+        // Raw bytes claim (e.g. image data)
         bytes(list<u8>),
     }
 
-    /// A claim in the identity microledger
+    // A claim in the identity microledger
     record id-claim {
-        /// Key of the claim e.g. "name", 
+        // Key of the claim (e.g. "name")
         key: string,
-        /// Value of the claim encoded based on key type
+        // Value of the claim, encoded based on key type
         value: id-claim-value-kind,
     }
 
-    record id-inception {        
+    // The inception event for an identity
+    record id-inception {
+        // Creation timestamp of the identity
         timestamp: s64,
+        // Signature threshold for the current signers
         threshold: u8,
+        // Current signers
         signers: list<id-signer>,
+        // Next signature threshold to be used after rotation
         next-threshold: u8,
+        // Identifiers of the signers that will be used after rotation
         next-signers: list<string>,
+        // List of initial claims associated with the identity
         claims: list<id-claim>,
     }
 
+    // The rotation event for an identity
     record id-rotation {
+        // The newly introduced signers
         signers: list<id-signer>,
+        // Next signature threshold after this rotation
         next-threshold: u8,
+        // Identifiers of the signers that will be used after the next rotation
         next-signers: list<string>,
     }
 
+    // Variants of identity events
     variant id-event-kind {
-        // Should be signed with current keys
+        // Interaction event - should be signed with current keys
         interaction(list<id-claim>),
-        // Should be signed with next keys
+        // Rotation event - should be signed with next keys
         rotation(id-rotation),
-        // Should be signed with next keys
+        // Migration event - should be signed with next keys
         migration(string),
     }
 
+    // An event in the identity microledger
     record id-event {
-        // Timestamp of event
+        // Timestamp of the event
         timestamp: s64,
-        // Previous event id
+        // ID of the previous event
         previous: string,
-        // Event payload
+        // Payload of the event
         payload: id-event-kind,
-    }    
+    }
 }
 
 interface model {
     use types.{id-signer, id-claim};
 
+    // A proof of identity event
     record persisted-id-proof {
+        // Identifier of the signer
         id: string,
+        // Public key bytes of the signer
         pk: list<u8>,
+        // Signature bytes
         sig: list<u8>,
     }
 
+    // Persisted identity inception record
     record persisted-id-inception {
+        // ID of the identity
         id: string,
+        // Version of the protocol
         version: string,
+        // Serialized inception payload
         payload: list<u8>,
     }
 
+    // Persisted identity event record
     record persisted-id-event {
+        // ID of the identity
         id: string,
+        // Version of the protocol
         version: string,
+        // Serialized event payload
         payload: list<u8>,
+        // One or more proofs of the event
         proofs: list<persisted-id-proof>,
     }
 
+    // A projection of the current state of an identity
     record id-projection {
-        // Identifier 
+        // Unique identifier of the identity
         id: string,
-        // Last event id
+        // ID of the most recent event
         event-id: string,
-        // Last event time
+        // Timestamp of the most recent event
         event-timestamp: s64,
-        // Threshold  
+        // Current signature threshold
         threshold: u8,
-        // Next threshold  
+        // Next signature threshold for future rotations
         next-threshold: u8,
-        // Current signers
+        // Current signers (list of signer records)
         signers: list<id-signer>,
-        // CID codec should be 0xed 
+        // Next signers' identifiers (CID codec should be 0xed)
         next-signers: list<string>,
-        // All keys
+        // All signers' identifiers that have ever participated
         all-signers: list<string>,
-        // All actions
+        // Current claims associated with the identity
         claims: list<id-claim>,
-        // Delegate
+        // Next identity delegate (if any)
         next-id: option<string>,
-    }    
+    }
 }
-```
 
+```
+</details>
 ## Peer-to-Peer (P2P) Network Layer
 
 > Based on libp2p gossipsub protocol
