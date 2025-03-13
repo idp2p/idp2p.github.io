@@ -57,7 +57,7 @@ In idp2p, each DID is represented as a dedicated pub/sub topic on the libp2p net
     Ensures deterministic execution, security, and portability, allowing the identity layer to run seamlessly across platforms.
 <details>
 <summary>
-  Here is the wit(webassembly interface types) model of the identity layer
+  Model of the identity layer(webassembly interface types)
 </summary>
   
 ```wit
@@ -195,6 +195,7 @@ interface model {
 
 ```
 </details>
+
 ## Peer-to-Peer (P2P) Network Layer
 
 > Based on libp2p gossipsub protocol
