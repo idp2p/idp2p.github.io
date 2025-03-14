@@ -22,17 +22,13 @@ KERI (Key Event Receipt Infrastructure) further strengthens the system by managi
 
 While DIDs, DIDComm, and KERI provide a robust framework for decentralized messaging and identity management, several challenges remain to fully realize a seamless self‑sovereign identity ecosystem. Addressing these challenges is essential for ensuring reliable identity resolution, efficient communication, and long‑term protocol evolution. The key challenges include:
 
-- **DID Resolution:**  
-  How to reliably resolve a decentralized identifier.
+- How to reliably resolve a decentralized identifier.
 
-- **Event Notification:**  
-  How to efficiently notify subscribers about KERI events.
+- How to efficiently notify subscribers about KERI events.
 
-- **Messaging:**  
-  How to know communication locations send messages to one or more subscribers.
+- How to know communication locations send messages to one or more subscribers.
 
-- **Protocol Evolution:**  
-  How to manage identity protocol changes and support multiple implementations.
+- How to manage identity protocol changes and support multiple implementations.
 
 This overview lays the groundwork for addressing these challenges within a self-sovereign identity ecosystem.
 
@@ -245,11 +241,7 @@ Messages are encrypted in transit using the built-in libp2p TLS layer. No additi
 
 ### Publication and Retrieval
 
-When a message is sent to a specific ID, a summary of the message (including provider node details) is published via pubsub. Recipients then fetch the full message from the designated provider nodes.
-
-### Mediator Pattern
-
-For IDs that change frequently (non-stable IDs), the protocol suggests but does not mandate using a mediator pattern.
+When a message is sent to a specific ID, hash of the message and provider node details are published via pubsub. Recipients then fetch the full message from the provider nodes.
 
 
 ## Contributions
