@@ -139,12 +139,12 @@ world idp2p-id {
 ```mermaid
 sequenceDiagram
     participant Alice
-    participant Bob
-    participant P2PNet as P2P Network
     participant ProviderPeer
+    participant P2PNet as P2P Network
+    participant Bob
 
     Alice->>P2PNet: Publish `Resolve` (topic = Bob's ID)
-    Bob->>P2PNet: Publish `Provide` (topic = Bob's ID, includes provider peers)
+    Bob->>P2PNet: Publish `Provide` (topic = Bob's ID, providers)
     Alice->>ProviderPeer: Request Bob's identity
     ProviderPeer->>Alice: Return Bob's identity data
     Alice->>Alice: Verify authenticity & store Bob's identity
@@ -200,9 +200,9 @@ sequenceDiagram
 ```mermaid
 sequenceDiagram
     participant Alice
-    participant Bob
-    participant P2PNet as P2P Network
     participant ProviderPeer
+    participant P2PNet as P2P Network
+    participant Bob
 
     Alice->>P2PNet: Publish `Message` (topic = Bob's ID, message ID, provider peers)
     P2PNet->>Bob: Notify new `Message` (message ID)
