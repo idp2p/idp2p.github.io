@@ -55,146 +55,65 @@ In idp2p, each DID is represented as a dedicated pub/sub topic on the libp2p net
     Manages identities using secure, event-based updates without relying on a central ledger.
   - **WebAssembly:**  
     Ensures deterministic execution, security, and portability, allowing the identity layer to run seamlessly across platforms.
-<details>
-<summary>
-  Model of the identity layer(webassembly interface types)
-</summary>
+  
+Model of the identity layer(webassembly interface types):
   
 ```wit
-interface types {
-    // A signer in the identity microledger
-    record id-signer {
-        // Identifier of the signer e.g. "signer"
-        id: string,
-        // Public key bytes of the signer
-        public-key: list<u8>,
+package idp2p:id;
+
+world idp2p-id {
+    record id-version {
+        major: u16,
+        minor: u16
     }
-
-    // Possible kinds of claim values
-    variant id-claim-value-kind {
-        // Textual claim (e.g. "Alice")
-        text(string),
-        // Raw bytes claim (e.g. image data)
-        bytes(list<u8>),
-    }
-
-    // A claim in the identity microledger
-    record id-claim {
-        // Key of the claim (e.g. "name")
-        key: string,
-        // Value of the claim, encoded based on key type
-        value: id-claim-value-kind,
-    }
-
-    // The inception event for an identity
-    record id-inception {
-        // Creation timestamp of the identity
-        timestamp: s64,
-        // Signature threshold for the current signers
-        threshold: u8,
-        // Current signers
-        signers: list<id-signer>,
-        // Next signature threshold to be used after rotation
-        next-threshold: u8,
-        // Identifiers of the signers that will be used after rotation
-        next-signers: list<string>,
-        // List of initial claims associated with the identity
-        claims: list<id-claim>,
-    }
-
-    // The rotation event for an identity
-    record id-rotation {
-        // The newly introduced signers
-        signers: list<id-signer>,
-        // Next signature threshold after this rotation
-        next-threshold: u8,
-        // Identifiers of the signers that will be used after the next rotation
-        next-signers: list<string>,
-    }
-
-    // Variants of identity events
-    variant id-event-kind {
-        // Interaction event - should be signed with current keys
-        interaction(list<id-claim>),
-        // Rotation event - should be signed with next keys
-        rotation(id-rotation),
-        // Migration event - should be signed with next keys
-        migration(string),
-    }
-
-    // An event in the identity microledger
-    record id-event {
-        // Timestamp of the event
-        timestamp: s64,
-        // ID of the previous event
-        previous: string,
-        // Payload of the event
-        payload: id-event-kind,
-    }
-}
-
-interface model {
-    use types.{id-signer, id-claim};
-
-    // A proof of identity event
+    /// Cryptographic proof attached to identity events to verify authenticity.
     record persisted-id-proof {
-        // Identifier of the signer
-        id: string,
-        // Public key bytes of the signer
-        pk: list<u8>,
-        // Signature bytes
-        sig: list<u8>,
+        id: string,        // Identifier of the public key
+        pk: list<u8>,      // Public key used to verify the signature
+        sig: list<u8>,     // Cryptographic signature proving authenticity
     }
 
-    // Persisted identity inception record
+    /// Represents the initial creation event (inception) of an identity.
     record persisted-id-inception {
-        // ID of the identity
-        id: string,
-        // Version of the protocol
-        version: string,
-        // Serialized inception payload
-        payload: list<u8>,
+        id: string,        // Unique identifier for the new identity
+        version: u32,      // Version number of the inception data format
+        payload: list<u8>, // Raw binary payload containing inception data
     }
 
-    // Persisted identity event record
+    /// Represents subsequent events or updates related to an existing identity.
     record persisted-id-event {
-        // ID of the identity
-        id: string,
-        // Version of the protocol
-        version: string,
-        // Serialized event payload
-        payload: list<u8>,
-        // One or more proofs of the event
-        proofs: list<persisted-id-proof>,
+        id: string,                       // Identifier of this event
+        version: u32,                     // Version number of the event data format
+        payload: list<u8>,                // Binary payload describing the event
+        proofs: list<persisted-id-proof>, // List of cryptographic proofs verifying event authenticity
     }
 
-    // A projection of the current state of an identity
-    record id-projection {
-        // Unique identifier of the identity
-        id: string,
-        // ID of the most recent event
-        event-id: string,
-        // Timestamp of the most recent event
-        event-timestamp: s64,
-        // Current signature threshold
-        threshold: u8,
-        // Next signature threshold for future rotations
-        next-threshold: u8,
-        // Current signers (list of signer records)
-        signers: list<id-signer>,
-        // Next signers' identifiers (CID codec should be 0xed)
-        next-signers: list<string>,
-        // All signers' identifiers that have ever participated
-        all-signers: list<string>,
-        // Current claims associated with the identity
-        claims: list<id-claim>,
-        // Next identity delegate (if any)
-        next-id: option<string>,
+    /// Represents the authoritative current state or snapshot of an identity.
+    record id-state {
+        version: u32,      // Version number of the identity state format
+        payload: list<u8>, // Raw binary payload representing identity state data
     }
+
+    /// Represents a claim or attribute associated with an identity, possibly updated over time.
+    record id-claim {
+        key: string,       // Key identifying the specific claim or attribute
+        payload: list<u8>, // Binary payload containing the claim data
+    }
+
+    /// Successful result structure returned after verifying identity inception or events.
+    record id-result {
+        state: id-state,        // The verified identity state after the operation
+        claims: list<id-claim>, // Collection of verified claims associated with the identity
+    }
+
+    /// Verifies an initial identity inception event.
+    export verify-inception: func(incepiton: persisted-id-inception) -> result<id-result, string>;
+
+    /// Verifies an identity update event against the existing identity state.
+    export verify-event: func(state: id-state, event: persisted-id-event) -> result<id-result, string>;
 }
 
 ```
-</details>
 
 ## Peer-to-Peer (P2P) Network Layer
 
